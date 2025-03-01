@@ -21,9 +21,19 @@ This creates scenarios where their liquidity is _"idled"_ because it does not fa
 
 FluX solves this problem by re-allocating automatically idle liquidity into lending protocol that use Silo Finance v2. 
 
-FluX goal is to optimize liquidity allocation between DeFi markets. In this MVP it balances liquidity between swapping and lending pool, in order to not let liquidity idle (not generating revenue).
+FluX goal is to optimize liquidity allocation between DeFi markets. In thi  s MVP it balances liquidity between swapping and lending pool, in order to not let liquidity idle (not generating revenue).
 
 ## How it works?
+
+
+```mermaid
+graph LR
+  A[Uniswap v4 Pool] <-- Swap Event / Liquidity Shift --> B[FluX Finance Protocol]
+  B <-- Liquidity Optimization / Lending Decision --> D[Silo Finance v2 Lending Pool]
+  D -- Borrow Demand / Repayment Affects Liquidity --> B
+  B -- Rebalance Liquidity --> A
+
+```
 
 FluX uses hooks from Uniswap v4 and Silo Finance v2 to adjust liquidity automatically between these two markets.
 
