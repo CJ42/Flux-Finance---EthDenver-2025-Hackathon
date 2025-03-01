@@ -10,8 +10,6 @@ import {BaseHookReceiver} from "silo-core-v2/utils/hook-receivers/_common/BaseHo
 import {GaugeHookReceiver} from "silo-core-v2/utils/hook-receivers/gauge/GaugeHookReceiver.sol";
 import {PartialLiquidation} from "silo-core-v2/utils/hook-receivers/liquidation/PartialLiquidation.sol";
 
-contract MySiloFinanceHook is 
-
 /// @dev Example of hook, that prevents borrowing asset. Note: borrowing same asset is still available.
 contract NonBorrowableHook is GaugeHookReceiver, PartialLiquidation {
     error NonBorrowableHook_CanNotBorrowThisAsset();
