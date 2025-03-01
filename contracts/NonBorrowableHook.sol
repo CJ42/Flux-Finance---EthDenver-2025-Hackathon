@@ -10,6 +10,8 @@ import {BaseHookReceiver} from "silo-core-v2/utils/hook-receivers/_common/BaseHo
 import {GaugeHookReceiver} from "silo-core-v2/utils/hook-receivers/gauge/GaugeHookReceiver.sol";
 import {PartialLiquidation} from "silo-core-v2/utils/hook-receivers/liquidation/PartialLiquidation.sol";
 
+contract MySiloFinanceHook is 
+
 /// @dev Example of hook, that prevents borrowing asset. Note: borrowing same asset is still available.
 contract NonBorrowableHook is GaugeHookReceiver, PartialLiquidation {
     error NonBorrowableHook_CanNotBorrowThisAsset();
@@ -19,9 +21,15 @@ contract NonBorrowableHook is GaugeHookReceiver, PartialLiquidation {
     address public nonBorrowableSilo;
 
     /// @dev this method is mandatory and it has to initialize inherited contracts
-    function initialize(ISiloConfig _siloConfig, bytes calldata _data) external initializer override {
+    function initialize(
+        ISiloConfig _siloConfig,
+        bytes calldata _data
+    ) external override initializer {
         // do not remove initialization lines, if you want fully compatible functionality
-        (address owner, address nonBorrowableAsset) = abi.decode(_data, (address, address));
+        (address owner, address nonBorrowableAsset) = abi.decode(
+            _data,
+            (address, address)
+        );
 
         // initialize hook with SiloConfig address.
         // SiloConfig is the source of all information about Silo markets you are extending.
@@ -33,8 +41,15 @@ contract NonBorrowableHook is GaugeHookReceiver, PartialLiquidation {
         __NonBorrowableHook_init(_siloConfig, nonBorrowableAsset);
     }
 
-    function __NonBorrowableHook_init(ISiloConfig _siloConfig, address _nonBorrowableAsset) internal {
-        require(_nonBorrowableAsset != address(0), NonBorrowableHook_AssetZero());
+    function __NonBorrowableHook_init(
+        ISiloConfig _siloConfig,
+        address _nonBorrowableAsset
+    ) internal {
+        // can be deleted
+        require(
+            _nonBorrowableAsset != address(0),
+            NonBorrowableHook_AssetZero()
+        );
 
         (address silo0, address silo1) = _siloConfig.getSilos();
         address nonBorrowableSiloCached;
@@ -43,13 +58,16 @@ contract NonBorrowableHook is GaugeHookReceiver, PartialLiquidation {
             nonBorrowableSiloCached = silo0;
         else if (ISilo(silo1).asset() == _nonBorrowableAsset)
             nonBorrowableSiloCached = silo1;
-        else
-            revert NonBorrowableHook_WrongAssetForMarket();
+        else revert NonBorrowableHook_WrongAssetForMarket();
 
         nonBorrowableSilo = nonBorrowableSiloCached;
 
+        // -----
+
         // fetch current setup in case there were some hooks already implemented
-        (uint256 hooksBefore, uint256 hooksAfter) = _hookReceiverConfig(nonBorrowableSiloCached);
+        (uint256 hooksBefore, uint256 hooksAfter) = _hookReceiverConfig(
+            nonBorrowableSiloCached
+        );
 
         // your code here
         //
@@ -57,16 +75,23 @@ contract NonBorrowableHook is GaugeHookReceiver, PartialLiquidation {
         // It is expected that hooks bitmap will store settings for multiple hooks and utility
         // functions like `addAction` and `removeAction` will make sure to not override
         // other hooks' settings.
-        hooksBefore = Hook.addAction(hooksBefore, Hook.BORROW);
+        hooksBefore = Hook.addAction(hooksBefore, Hook.BORROW); // TODO: change to deposit
         _setHookConfig(nonBorrowableSiloCached, hooksBefore, hooksAfter);
     }
 
     /// @inheritdoc IHookReceiver
-    function beforeAction(address _silo, uint256 _action, bytes calldata) external view {
-        if (Hook.matchAction(_action, Hook.BORROW)) {
-            require(_silo != nonBorrowableSilo, NonBorrowableHook_CanNotBorrowThisAsset());
-        }
+    function beforeAction(
+        address _silo,
+        uint256 _action,
+        bytes calldata
+    ) external view {
+        if (Hook.matchAction(_action, Hook.DEPOSIT)) {
+            require(
+                _silo != nonBorrowableSilo,
+                NonBorrowableHook_CanNotBorrowThisAsset()
+            );
 
-        
+            // ...
+        }
     }
 }
