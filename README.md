@@ -37,9 +37,22 @@ graph LR
 
 FluX uses hooks from Uniswap v4 and Silo Finance v2 to adjust liquidity automatically between these two markets.
 
-For instance, if the liquidity is idle on Uniswap v4, it will take some of it and provide it in the lending market (a Silo from Silo Finance) where it can generate borrowing interests.
+For instance,**** if the liquidity is idle on Uniswap v4, it will take some of it and provide it in the lending market (a Silo from Silo Finance) where it can generate borrowing interests.
 
 It works by taking idle liquidity in Uniswap v4 pair (= liquidity that is not actively being utilized in swaps) and provide it in a lending market (a Silo from Silo Finance) where it can generate borrowing interests.
+
+
+## Examples user flow
+
+### Example 1: move liquidity when swapping
+
+1. Alice provided Liquidity to Uniswap v4 for the pair ETH / USDC. Her liquidity is configured to be used for the price range 1,800 USD to 2,100 USD.
+
+2. A user
+
+## Limitations
+
+This example is very barebone and used as an MVP. It works for simplicity as assuming there is a single address that provided liquidity to the pool on both the Uniswap v4 pair and the Silo Finance v2 lending pool.
 
 ## Resources used
 

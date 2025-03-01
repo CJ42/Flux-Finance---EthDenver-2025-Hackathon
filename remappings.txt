@@ -4,3 +4,7 @@ silo-core-v2/=gitmodules/silo-contracts-v2/silo-core/contracts/
 silo-oracles-v2/=gitmodules/silo-contracts-v2/silo-oracles/contracts/
 
 openzeppelin5/=gitmodules/openzeppelin-contracts-5/contracts/
+
+uniswap-hooks/=gitmodules/uniswap-hooks/
+v4-core/=gitmodules/v4-core/
+v4-periphery/=gitmodules/v4-periphery/
