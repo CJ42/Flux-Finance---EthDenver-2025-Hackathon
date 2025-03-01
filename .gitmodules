@@ -7,12 +7,15 @@
 [submodule "openzeppelin-contracts-5"]
 	path = gitmodules/openzeppelin-contracts-5
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
-[submodule "lib/v4-core"]
-	path = lib/v4-core
+[submodule "gitmodules/v4-core"]
+	path = gitmodules/v4-core
 	url = https://github.com/uniswap/v4-core
-[submodule "lib/v4-periphery"]
-	path = lib/v4-periphery
+[submodule "gitmodules/v4-periphery"]
+	path = gitmodules/v4-periphery
 	url = https://github.com/uniswap/v4-periphery
-[submodule "lib/uniswap-hooks"]
-	path = lib/uniswap-hooks
+[submodule "gitmodules/uniswap-hooks"]
+	path = gitmodules/uniswap-hooks
 	url = https://github.com/openzeppelin/uniswap-hooks
+[submodule "gitmodules/chainlink"]
+	path = gitmodules/chainlink
+	url = https://github.com/smartcontractkit/chainlink
