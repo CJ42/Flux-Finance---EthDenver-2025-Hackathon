@@ -18,4 +18,4 @@
 	url = https://github.com/openzeppelin/uniswap-hooks
 [submodule "gitmodules/chainlink"]
 	path = gitmodules/chainlink
-	url = https://github.com/smartcontractkit/chainlink
+	url = https://github.com/smartcontractkit/chainlinkj

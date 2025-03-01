@@ -60,5 +60,5 @@ This example is very barebone and used as an MVP. It works for simplicity as ass
 - [Silo Finance v2 docs - Hooks Tutorial](https://docs.silo.finance/docs/developers/dev-tutorials/hooks)
 - [ChainLink Price Data Feed for USDC / ETH](https://docs.chain.link/data-feeds/price-feeds/addresses?network=ethereum&page=1&search=USDC+%2F+ETH)
 
-
+- [Tutorial from Uniswap v4 to decrease liquidity](https://docs.uniswap.org/contracts/v4/quickstart/manage-liquidity/decrease-liquidity)
 

@@ -8,10 +8,12 @@ import {BaseHook as UniswapV4BaseHook} from "uniswap-hooks/src/base/BaseHook.sol
 // Interfaces
 import {ISiloConfig} from "silo-core-v2/interfaces/ISiloConfig.sol";
 import {IPoolManager} from "v4-core/src/interfaces/IPoolManager.sol";
+import {IPositionManager as IUniswapPositionManager} from "v4-periphery/src/interfaces/IPositionManager.sol";
 
 // Libraries
 import {Hook as SiloFinanceHookLib} from "silo-contracts-v2/silo-core/contracts/lib/Hook.sol";
 import {Hooks as UniswapV4HooksLib} from "v4-core/src/libraries/Hooks.sol";
+import {Actions as UniswapActions} from "v4-periphery/src/libraries/Actions.sol";
 
 // Constants
 import {PoolKey} from "v4-core/src/types/PoolKey.sol";
@@ -25,7 +27,16 @@ import {BeforeSwapDelta, BeforeSwapDeltaLibrary} from "v4-core/src/types/BeforeS
 
 ///
 /// TODO: add GaugeHookReceiver + PartialLiquidation hook in inheritance + explain it is needed for production
+
+/// @title FluXProtocol
+/// @notice FluXProtocol is a hook contract that sits between a Uniswap v4 pool and a Silo Finance v2 lending pool.
+/// It reacts to hooks from both pools on swaps and borrows.
 abstract contract FluXProtocol is SiloBaseHookReceiver, UniswapV4BaseHook {
+    // Hardcoded configurations for simplicity
+    uint256 private constant _LIQUIDITY_AMOUNT_TO_MOVE = 5 ether;
+    address private constant _USDC_TOKEN_ADDRESS =
+        0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+
     address private _liquidityProvider;
 
     constructor(
@@ -97,10 +108,36 @@ abstract contract FluXProtocol is SiloBaseHookReceiver, UniswapV4BaseHook {
         IPoolManager.SwapParams calldata,
         bytes calldata
     ) external override returns (bytes4, BeforeSwapDelta, uint24) {
-        // beforeSwapCount[key.toId()]++;
-        // return (BaseHook.beforeSwap.selector, BeforeSwapDeltaLibrary.ZERO_DELTA, 0);
-        // move liquidity out of Uniswap
-        // move liquidity inside Silo Finance
+        // move liquidity out of Uniswap 🦄
+        // --------------------------------
+
+        // 1. define the position manager for the Uniswap v4 pool (e.g: ETH / USDC)
+        IUniswapPositionManager uniswapPositionManager = IPositionManager(
+            0xcafecafecafecafecafecafecafecafecafecafe
+        );
+
+        // 2. encode action to remove liquidity in Uniswap
+        bytes memory uniswapActions = abi.encodePacked(
+            uint8(Actions.DECREASE_LIQUIDITY),
+            uint8(Actions.TAKE_PAIR)
+        );
+
+        bytes[] memory params = new bytes[](2);
+
+        // 🦄 Uniswap v4: DECREASE_LIQUIDITY action
+        params[0] = abi.encode(
+            111, // position identifier (example)
+            _LIQUIDITY_AMOUNT_TO_MOVE, // amount of liquidity to remove
+            0, // minimum amount of currency0 liquidity msg.sender is willing to receive
+            0, // minimum amount of currency0 liquidity msg.sender is willing to receive
+            "" // arbitrary data that will be forwarded to hook functions
+        );
+
+        Currency currency0 = Currency.wrap(address(0)); // address(0) for native ETH
+        Currency currency1 = Currency.wrap(_USDC_TOKEN_ADDRESS);
+        params[1] = abi.encode(currency0, currency1, _liquidityProvider);
+
+        // move liquidity inside Silo Finance 🔲
     }
 
     /// @dev Check if some liquidity in the same pair provided for the recipient
